@@ -16,7 +16,7 @@ After starting the game you can also save the game or exit current profile or ex
 * GameController: is responsible of control the flow of the game
 * Model package: dto of the game
 
-![Image of design](https://motazEmad.github.com/images/design.png)
+![Image of design](https://raw.githubusercontent.com/motazEmad/game-puzzle/master/design.png)
 
 ### Build
 using maven build tool
