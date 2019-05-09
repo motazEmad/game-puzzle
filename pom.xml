@@ -39,6 +39,12 @@
 					<include>**/*.properties</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>src/test/java</directory>
+				<includes>
+					<include>**/*.txt</include>
+				</includes>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>

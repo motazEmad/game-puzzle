@@ -22,6 +22,11 @@ After starting the game you can also save the game or exit current profile or ex
 using maven build tool
 ```sh
 $ cd game-puzzle
+$ mvn clean package
+```
+or
+
+```sh
 $ mvn clean install
 ```
 
