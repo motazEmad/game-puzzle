@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.stream.IntStream;
 
 import com.company.games.puzzle.controller.util.ConsoleReaderUtils;
+import com.company.games.puzzle.controller.util.StreamFactory;
 import com.company.games.puzzle.controller.util.SaveFileUtils;
 import com.company.games.puzzle.exception.CommandException;
 import com.company.games.puzzle.gamelogic.GameService;
@@ -30,29 +31,36 @@ import com.company.games.puzzle.model.ProfileCommandResult;
 
 public class CommandLineGameController implements GameController {
 
-	private PrintStream console = System.out;
-	private PrintStream errorconsole = System.err;
-	private BufferedReader userinputReader = new BufferedReader(new InputStreamReader(System.in));
-	private GameWorld gameWorld;
-	private Map<String, GameWorld> savedprofiles;
+	private PrintStream console;
+	private PrintStream errorconsole;
+	private BufferedReader userinputReader;
 	private Properties properties = new Properties();
+	private Map<String, GameWorld> savedprofiles;
+	private GameWorld gameWorld;
+	private GameLoaderFactory gameLoaderFactory;
 	
-	public CommandLineGameController() {
-		gameWorld = new GameWorld(null);
-	}
-
-	public void startGame() {
-		console.println("Loading...");
-		GameLoader gameLoader = GameLoaderFactory.getInstance();
-		String welcommessage = gameLoader.getMessages().getWelcomeMessage();
-		console.println(welcommessage);
-		
+	public CommandLineGameController(StreamFactory streamFactory) {
+		this.userinputReader = new BufferedReader(new InputStreamReader(streamFactory.getInputStream()));
+		console = streamFactory.getOutputStream();
+		errorconsole = streamFactory.getErrorStream();
+		gameLoaderFactory = new GameLoaderFactory();
 		try (InputStream input = getClass().getResourceAsStream("/resources/config.properties")) {
 			properties.load(input);
 		} catch (IOException io) {
 			errorconsole.println("Failed to load game: error loading configuration");
 		}
-		
+	}
+	
+	public CommandLineGameController(StreamFactory streamFactory, GameLoaderFactory gameLoaderFactory) {
+		this(streamFactory);
+		this.gameLoaderFactory = gameLoaderFactory;
+	}
+
+	public void startGame() {
+		console.println("Loading...");
+		GameLoader gameLoader = gameLoaderFactory.getInstance();
+		String welcommessage = gameLoader.getMessages().getWelcomeMessage();
+		console.println(welcommessage);
 		console.println("Game is ready");
 	}
 	
@@ -111,7 +119,7 @@ public class CommandLineGameController implements GameController {
 		return SaveFileUtils.writeSavedFile(savefile, savedprofiles);
 	}
 	
-	public void deleteProfile(String playerName) {
+	private void deleteProfile(String playerName) {
 		if(!savedprofiles.containsKey(playerName)) {
 			errorconsole.println("Invalid Profile Name");
 			return;
@@ -167,7 +175,7 @@ public class CommandLineGameController implements GameController {
 				Integer.parseInt(properties.getProperty("initPlayerDefence", "0"))));
 		player.setLife(Integer.parseInt(properties.getProperty("lifes", "3")));
 		
-		GameLoader gameLoader = GameLoaderFactory.getInstance();
+		GameLoader gameLoader = gameLoaderFactory.getInstance();
 		List<Location> locations = gameLoader.getLocations();
 		List<Character> villains = gameLoader.getVillains();
 		
@@ -180,7 +188,9 @@ public class CommandLineGameController implements GameController {
 	@Override
 	public GameWorld selectAllie() {
 		console.println("\n\nSelect an Allie: ");
-		List<Character> allies = GameLoaderFactory.getInstance().getAllies();
+		if(gameWorld == null)
+			gameWorld = new GameWorld(null);
+		List<Character> allies = gameLoaderFactory.getInstance().getAllies();
 		if(allies.size() == 0) {
 			console.println("you are meant to be alone on this path");
 			return gameWorld;
@@ -191,7 +201,6 @@ public class CommandLineGameController implements GameController {
 		// get selected allie
 		int selected = ConsoleReaderUtils.readIntInput(userinputReader,(in) -> in > 0 && in <= allies.size(), 
 				"Invalid Input, please enter values from 1 to " + allies.size());
-
 		gameWorld.setAllie(allies.get(selected - 1));
 		console.println("you selected " + allies.get(selected - 1) + " to fight along with you");
 		return gameWorld;

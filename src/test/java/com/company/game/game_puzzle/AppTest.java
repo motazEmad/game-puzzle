@@ -1,38 +1,41 @@
 package com.company.game.game_puzzle;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.io.InputStream;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
-    }
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
+import com.company.games.puzzle.App;
+import com.company.games.puzzle.controller.CommandLineGameController;
+import com.company.games.puzzle.controller.util.StreamFactory;
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
-    }
+@RunWith(MockitoJUnitRunner.class)
+public class AppTest {
+	
+	@Mock
+	StreamFactory stream;
+	
+	@Before
+	public void init() {
+	    MockitoAnnotations.initMocks(this);
+	}
+	
+	@Test
+	public void testApp() {
+		InputStream input = getClass().getResourceAsStream("/test_resources/success_scenario.txt");
+		Mockito.when(stream.getInputStream()).thenReturn(input);
+		Mockito.when(stream.getOutputStream()).thenReturn(System.out);
+		Mockito.when(stream.getErrorStream()).thenReturn(System.err);
+		
+		CommandLineGameController gameController = new CommandLineGameController(stream);
+		
+		
+		new App().game(gameController);
+	}
+
 }

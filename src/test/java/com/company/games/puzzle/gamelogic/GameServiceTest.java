@@ -1,4 +1,4 @@
-package com.company.games.puzzle.configuration;
+package com.company.games.puzzle.gamelogic;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -25,7 +25,7 @@ public class GameServiceTest {
 	@Test
 	public void testsetVillainsLocations() {
 		
-		GameLoader gameLoader = GameLoaderFactory.getInstance();
+		GameLoader gameLoader = new GameLoaderFactory().getInstance();
 		List<Location> locations = gameLoader.getLocations();
 		List<Character> villains = gameLoader.getVillains();
 		GameWorld game = GameServiceImpl.getInstance().setVillainsLocations(villains, locations);
@@ -47,7 +47,7 @@ public class GameServiceTest {
 	
 	@Test
 	public void testWinFight() {
-		GameLoader gameLoader = GameLoaderFactory.getInstance();
+		GameLoader gameLoader = new GameLoaderFactory().getInstance();
 		List<Location> locations = gameLoader.getLocations();
 		List<Character> villains = gameLoader.getVillains();
 		GameWorld game = GameServiceImpl.getInstance().setVillainsLocations(villains, locations);
@@ -64,7 +64,7 @@ public class GameServiceTest {
 	
 	@Test
 	public void testLoseFight() {
-		GameLoader gameLoader = GameLoaderFactory.getInstance();
+		GameLoader gameLoader = new GameLoaderFactory().getInstance();
 		List<Location> locations = gameLoader.getLocations();
 		List<Character> villains = gameLoader.getVillains();
 		GameWorld game = GameServiceImpl.getInstance().setVillainsLocations(villains, locations);
@@ -80,7 +80,7 @@ public class GameServiceTest {
 	
 	@Test
 	public void testFightwithAllie() {
-		GameLoader gameLoader = GameLoaderFactory.getInstance();
+		GameLoader gameLoader = new GameLoaderFactory().getInstance();
 		List<Location> locations = gameLoader.getLocations();
 		List<Character> villains = gameLoader.getVillains();
 		GameWorld game = GameServiceImpl.getInstance().setVillainsLocations(villains, locations);
