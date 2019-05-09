@@ -11,7 +11,7 @@ After starting the game you can also save the game or exit current profile or ex
 
 ### Architecture
 
-* GameLoader: is responsible of loading data and also the theme of the game
+* GameLoader: is responsible of loading data and also the theme of the game, changes can be done herein order to change the them of the game
 * GameService: is responsible of the game logic related functionality
 * GameController: is responsible of control the flow of the game
 * Model package: dto of the game
