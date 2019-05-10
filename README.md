@@ -5,7 +5,9 @@
 Game-puzzle is a CLI game
 
 first step is to create a profile or select an existing profile, then the game will start, you can go to places and fight villains
-when you win a fight your level will up based on the strength of the villain you won.
+when you win a fight your level will up based on the strength of the villain you beaten.
+
+When you kill all the villains in the world you win the game. If you lost many fights you lose the game.
 
 After starting the game you can also save the game or exit current profile or exit game.
 
