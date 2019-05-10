@@ -18,7 +18,8 @@ public class App {
 			ProfileCommandResult commandResult = null;
 			do {
 				commandResult = gameController.loadgame();
-			} while (commandResult == ProfileCommandResult.profileDeleted);
+			} while (commandResult == ProfileCommandResult.profileDeleted 
+					|| commandResult == ProfileCommandResult.profileNotSelected);
 
 			if (commandResult == ProfileCommandResult.newProfile) {
 				gameController.createPlayer();
