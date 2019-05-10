@@ -1,8 +1,10 @@
 package com.company.game.game_puzzle;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Before;
@@ -41,7 +43,7 @@ public class AppTest {
 	}
 	
 	@Test
-	public void testApp() {
+	public void testApp() throws IOException {
 		InputStream input = getClass().getResourceAsStream("/test_resources/success_scenario.txt");
 		Mockito.when(stream.getInputStream()).thenReturn(input);
 		Mockito.when(stream.getOutputStream()).thenReturn(System.out);
@@ -69,13 +71,28 @@ public class AppTest {
 				new String[] {"You win this match", "You are invincible"}));
 		Mockito.when(gameLoaderFactory.getInstance()).thenReturn(gameLoader);
 		
-		CommandLineGameController gameController = new CommandLineGameController(stream, gameLoaderFactory);
+		Properties properties = loadproperties();
+		CommandLineGameController gameController = new CommandLineGameController(stream, gameLoaderFactory, properties);
 		new App().game(gameController);
 	}
+
 	
 	@After
-	public void distroy() {
-		
+	public void distroy() throws IOException {
+		Properties properties = loadproperties();
+		String savepath = properties.getProperty("savePath");
+		File savefile = new File(System.getenv("userprofile") + properties.getProperty("fileSeparator", "\\") + savepath);
+		savefile.deleteOnExit();
 	}
 
+	public Properties loadproperties() throws IOException {
+		Properties properties = new Properties();
+		try (InputStream inputSteam = getClass().getResourceAsStream("/resources/config.properties")) {
+			properties.load(inputSteam);
+		}
+		try (InputStream inputSteam = getClass().getResourceAsStream("/test_resources/config.properties")) {
+			properties.load(inputSteam);
+		}
+		return properties;
+	}
 }

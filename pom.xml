@@ -43,6 +43,7 @@
 				<directory>src/test/java</directory>
 				<includes>
 					<include>**/*.txt</include>
+					<include>**/*.properties</include>
 				</includes>
 			</resource>
 		</resources>

@@ -55,6 +55,10 @@ public class CommandLineGameController implements GameController {
 		this(streamFactory);
 		this.gameLoaderFactory = gameLoaderFactory;
 	}
+	public CommandLineGameController(StreamFactory streamFactory, GameLoaderFactory gameLoaderFactory, Properties properties) {
+		this(streamFactory, gameLoaderFactory);
+		this.properties = properties;
+	}
 
 	public void startGame() {
 		console.println("Loading...");
