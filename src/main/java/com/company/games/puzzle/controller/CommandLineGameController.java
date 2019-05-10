@@ -64,7 +64,23 @@ public class CommandLineGameController implements GameController {
 		console.println("Game is ready");
 	}
 	
-	@Override
+	private ProfileCommandResult loadgame(String playerName) {
+		String savepath = properties.getProperty("savePath");
+		File savefile = new File(System.getenv("userprofile") + properties.getProperty("fileSeparator", "\\") + savepath);
+		if (!savefile.exists()) {
+			return ProfileCommandResult.newProfile;
+		}
+		savedprofiles = SaveFileUtils.readSavedFile(savefile);
+		if(savedprofiles == null || savedprofiles.isEmpty())
+			return ProfileCommandResult.newProfile;
+		GameWorld selectedprofile = savedprofiles.get(playerName);
+		if (selectedprofile != null && !selectedprofile.getPlayer().isWin()) {
+			gameWorld = selectedprofile;
+			return ProfileCommandResult.profileLoaded;
+		}
+		return ProfileCommandResult.profileNotSelected;
+	}
+	
 	public ProfileCommandResult loadgame() {
 		String savepath = properties.getProperty("savePath");
 		File savefile = new File(System.getenv("userprofile") + properties.getProperty("fileSeparator", "\\") + savepath);
@@ -158,7 +174,7 @@ public class CommandLineGameController implements GameController {
 		console.println("\n\ncreate a new player");
 		
 		console.print("Player Name: ");
-		player.setName(ConsoleReaderUtils.readInput(userinputReader));
+		player.setName(ConsoleReaderUtils.readInput(userinputReader, (s) -> s.matches("[a-zA-Z]+"), "Invalid Name, Only letters allowed").trim());
 
 		console.print("Age: ");
 		int maxAge = Integer.parseInt(properties.getProperty("maxAge"));
@@ -238,7 +254,18 @@ public class CommandLineGameController implements GameController {
 						console.println("Your level is: " + gameWorld.getPlayer().getExperience().getLevel() + "\n\n");
 					} else if(gameWorld.getPlayer().getLife() <= 1) {
 						console.println("You lost!");
-						return CommandResult.exitProfile;
+						console.println("Do you want to return to last save point ? (Y/N)");
+						String load = ConsoleReaderUtils.readInput(userinputReader, (s) -> s.equalsIgnoreCase("y") || s.equalsIgnoreCase("n"), "Invalid Input");
+						if(load.equalsIgnoreCase("y")) {
+							ProfileCommandResult loaded = loadgame(gameWorld.getPlayer().getName());
+							if(loaded == ProfileCommandResult.profileLoaded)
+								console.println("game loaded!");
+							else {
+								errorconsole.println("failed to load profile");
+								return CommandResult.exitProfile;
+							}
+						} else if(load.equalsIgnoreCase("n"))
+							return CommandResult.exitProfile;
 					} else {
 						console.println("You lost this fight, keep up for next one!");
 						gameService.loseLife(gameWorld.getPlayer());
@@ -255,6 +282,8 @@ public class CommandLineGameController implements GameController {
 
 	private Character selectVillain(Location selectedLocation) throws CommandException {
 		List<Character> villains = gameWorld.getWorld().get(selectedLocation);
+		if(villains == null)
+			return null;
 		console.println("select villain to fight: (enter 0 to go back to world map)");
 		if(villains.isEmpty()) {
 			console.println("you have beaten this place");
