@@ -85,11 +85,22 @@ public class CommandLineGameController implements GameController {
 		String savepath = properties.getProperty("savePath");
 		File savefile = new File(System.getenv("userprofile") + properties.getProperty("fileSeparator", "\\") + savepath);
 		if (!savefile.exists()) {
+			try {
+				selectProfile(new HashMap<>());
+			} catch (CommandException e) {
+				return handleProfileCommands(e);
+			}
 			return ProfileCommandResult.newProfile;
 		}
 		savedprofiles = SaveFileUtils.readSavedFile(savefile);
-		if(savedprofiles == null || savedprofiles.isEmpty())
+		if(savedprofiles == null || savedprofiles.isEmpty()) {
+			try {
+				selectProfile(new HashMap<>());
+			} catch (CommandException e) {
+				return handleProfileCommands(e);
+			}
 			return ProfileCommandResult.newProfile;
+		}
 		while(true) {
 			try {
 				GameWorld selectedprofile = selectProfile(savedprofiles);
@@ -136,6 +147,8 @@ public class CommandLineGameController implements GameController {
 	}
 	
 	private void deleteProfile(String playerName) {
+		if(savedprofiles == null)
+			savedprofiles = new HashMap<>();
 		if(!savedprofiles.containsKey(playerName)) {
 			errorconsole.println("Invalid Profile Name");
 			return;

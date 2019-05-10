@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,9 +70,12 @@ public class AppTest {
 		Mockito.when(gameLoaderFactory.getInstance()).thenReturn(gameLoader);
 		
 		CommandLineGameController gameController = new CommandLineGameController(stream, gameLoaderFactory);
-		
-		
 		new App().game(gameController);
+	}
+	
+	@After
+	public void distroy() {
+		
 	}
 
 }
